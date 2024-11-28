@@ -152,7 +152,7 @@ func (ctrl CustomerController) GetAll(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} customer.Customer{}
-// @Failure 404 "Customer not found"
+// @Failure 500 "Customer not found"
 // @Router /customer/{cpf} [get]
 func (ctrl CustomerController) GetByCpf(c *gin.Context) {
 	cpf := c.Param("cpf")
