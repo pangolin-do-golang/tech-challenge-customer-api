@@ -1,17 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 	_ "github.com/pangolin-do-golang/tech-challenge/docs"
-	dbAdapter "github.com/pangolin-do-golang/tech-challenge/internal/adapters/db"
+	"github.com/pangolin-do-golang/tech-challenge/internal/adapters/db/repositories"
 	"github.com/pangolin-do-golang/tech-challenge/internal/adapters/rest/server"
 	"github.com/pangolin-do-golang/tech-challenge/internal/core/customer"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 // @title Tech Challenge Customer Food API
@@ -21,12 +23,14 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
+	_ = godotenv.Load()
+
 	db, err := initDb()
 	if err != nil {
 		panic(err)
 	}
 
-	customerRepository := dbAdapter.NewPostgresCustomerRepository(db)
+	customerRepository := repositories.NewMongoCustomerRepository(db)
 	customerService := customer.NewService(customerRepository)
 
 	restServer := server.NewRestServer(&server.RestServerOptions{
@@ -36,26 +40,25 @@ func main() {
 	restServer.Serve()
 }
 
-func initDb() (*gorm.DB, error) {
-	_ = godotenv.Load()
-	dsn := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable TimeZone=America/Sao_Paulo",
+func initDb() (*mongo.Database, error) {
+	dns := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=admin",
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 	)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Panic(err)
-	}
 
-	err = db.AutoMigrate(
-		&dbAdapter.CustomerPostgres{},
-	)
+	clientOpts := options.Client().ApplyURI(dns)
+	client, err := mongo.Connect(clientOpts)
+
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	return db, nil
+	if err := client.Ping(context.Background(), nil); err != nil {
+		log.Fatalln(err)
+	}
+
+	return client.Database(os.Getenv("DB_NAME")), nil
 }
