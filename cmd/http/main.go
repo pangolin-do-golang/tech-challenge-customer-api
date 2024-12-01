@@ -7,10 +7,10 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	_ "github.com/pangolin-do-golang/tech-challenge/docs"
-	"github.com/pangolin-do-golang/tech-challenge/internal/adapters/db/repositories"
-	"github.com/pangolin-do-golang/tech-challenge/internal/adapters/rest/server"
-	"github.com/pangolin-do-golang/tech-challenge/internal/core/customer"
+	_ "github.com/pangolin-do-golang/tech-challenge-customer-api/docs"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/adapters/db/repositories"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/adapters/rest/server"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/core/customer"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -30,7 +30,7 @@ func main() {
 		panic(err)
 	}
 
-	customerRepository := repositories.NewMongoCustomerRepository(db)
+	customerRepository := repositories.NewMongoCustomerRepository(db.Collection("customer"))
 	customerService := customer.NewService(customerRepository)
 
 	restServer := server.NewRestServer(&server.RestServerOptions{

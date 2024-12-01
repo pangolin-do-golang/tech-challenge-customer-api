@@ -5,20 +5,20 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/pangolin-do-golang/tech-challenge/internal/adapters/db/documents"
-	"github.com/pangolin-do-golang/tech-challenge/internal/adapters/db/mappers"
-	"github.com/pangolin-do-golang/tech-challenge/internal/core/customer"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/adapters/db/documents"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/adapters/db/mappers"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/core/customer"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type MongoCustomerRepository struct {
-	collection *mongo.Collection
+	collection ICollection
 }
 
-func NewMongoCustomerRepository(db *mongo.Database) customer.IRepository {
-	return &MongoCustomerRepository{collection: db.Collection("customer")}
+func NewMongoCustomerRepository(db ICollection) customer.IRepository {
+	return &MongoCustomerRepository{collection: db}
 }
 
 func (r *MongoCustomerRepository) Create(ctx context.Context, cust *customer.Customer) (*customer.Customer, error) {
@@ -94,4 +94,23 @@ func (r *MongoCustomerRepository) GetByCpf(ctx context.Context, customerCpf stri
 		Email: document.Email,
 		Age:   document.Age,
 	}, nil
+}
+
+type ICollection interface {
+	InsertOne(ctx context.Context, document interface{},
+		opts ...options.Lister[options.InsertOneOptions]) (*mongo.InsertOneResult, error)
+	DeleteOne(
+		ctx context.Context,
+		filter interface{},
+		opts ...options.Lister[options.DeleteOptions],
+	) (*mongo.DeleteResult, error)
+	Find(ctx context.Context, filter interface{},
+		opts ...options.Lister[options.FindOptions]) (*mongo.Cursor, error)
+	FindOne(ctx context.Context, filter interface{},
+		opts ...options.Lister[options.FindOneOptions]) *mongo.SingleResult
+	FindOneAndUpdate(
+		ctx context.Context,
+		filter interface{},
+		update interface{},
+		opts ...options.Lister[options.FindOneAndUpdateOptions]) *mongo.SingleResult
 }

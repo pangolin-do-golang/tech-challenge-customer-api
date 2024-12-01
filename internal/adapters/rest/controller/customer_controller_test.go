@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/core/customer"
 	"github.com/pangolin-do-golang/tech-challenge-customer-api/mocks"
+	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -23,7 +24,7 @@ func TestCreateCustomerSuccessfully(t *testing.T) {
 	c.Request = httptest.NewRequest("POST", "/customer", strings.NewReader(`{"name":"John Doe","cpf":"12345678901","email":"john.doe@example.com","age":30}`))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	mockService.On("Create", customer.Customer{
+	mockService.On("Create", mock.Anything, &customer.Customer{
 		Name:  "John Doe",
 		Cpf:   "12345678901",
 		Email: "john.doe@example.com",
@@ -63,7 +64,8 @@ func TestUpdateCustomerSuccessfully(t *testing.T) {
 	c.Request = httptest.NewRequest("PUT", "/customer/"+id.String(), strings.NewReader(`{"name":"John Doe","cpf":"12345678901","email":"john.doe@example.com","age":30}`))
 	c.Request.Header.Set("Content-Type", "application/json")
 
-	mockService.On("Update", id, customer.Customer{
+	mockService.On("Update", mock.Anything, &customer.Customer{
+		Id:    id,
 		Name:  "John Doe",
 		Cpf:   "12345678901",
 		Email: "john.doe@example.com",
@@ -103,7 +105,7 @@ func TestDeleteCustomerSuccessfully(t *testing.T) {
 	c.Params = gin.Params{{Key: "id", Value: id.String()}}
 	c.Request = httptest.NewRequest("DELETE", "/customer/"+id.String(), nil)
 
-	mockService.On("Delete", id).Return(nil)
+	mockService.On("Delete", mock.Anything, id).Return(nil)
 
 	ctrl.Delete(c)
 
@@ -129,7 +131,7 @@ func TestGetAllCustomersSuccessfully(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 	c.Request = httptest.NewRequest("GET", "/customer", nil)
 
-	mockService.On("GetAll").Return([]customer.Customer{
+	mockService.On("GetAll", mock.Anything).Return([]*customer.Customer{
 		{
 			Id:    uuid.New(),
 			Name:  "John Doe",
@@ -152,7 +154,7 @@ func TestGetCustomerByCpfSuccessfully(t *testing.T) {
 	c.Params = gin.Params{{Key: "cpf", Value: "12345678901"}}
 	c.Request = httptest.NewRequest("GET", "/customer/12345678901", nil)
 
-	mockService.On("GetByCpf", "12345678901").Return(&customer.Customer{
+	mockService.On("GetByCpf", mock.Anything, "12345678901").Return(&customer.Customer{
 		Id:    uuid.New(),
 		Name:  "John Doe",
 		Cpf:   "12345678901",
@@ -173,7 +175,7 @@ func TestGetCustomerByCpfNotFound(t *testing.T) {
 	c.Params = gin.Params{{Key: "cpf", Value: "12345678901"}}
 	c.Request = httptest.NewRequest("GET", "/customer/12345678901", nil)
 
-	mockService.On("GetByCpf", "12345678901").Return(nil, errors.New("customer not found"))
+	mockService.On("GetByCpf", mock.Anything, "12345678901").Return(nil, errors.New("customer not found"))
 
 	ctrl.GetByCpf(c)
 

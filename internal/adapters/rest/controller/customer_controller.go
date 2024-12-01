@@ -3,11 +3,11 @@ package controller
 import (
 	"net/http"
 
-	"github.com/pangolin-do-golang/tech-challenge/internal/errutil"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/errutil"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/pangolin-do-golang/tech-challenge/internal/core/customer"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/core/customer"
 )
 
 type CustomerController struct {

@@ -27,7 +27,7 @@ func TestInputErrorReturns400(t *testing.T) {
 	ctrl := &controller.AbstractController{}
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	err := errutil.NewInputError(errors.New("input error"))
+	err := errutil.NewInputError(errors.New("Bad Request"))
 
 	ctrl.Error(c, err)
 

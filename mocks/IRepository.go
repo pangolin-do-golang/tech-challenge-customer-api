@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	customer "github.com/pangolin-do-golang/tech-challenge-customer-api/internal/core/customer"
 	mock "github.com/stretchr/testify/mock"
 
@@ -14,25 +16,25 @@ type IRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: _a0
-func (_m *IRepository) Create(_a0 customer.Customer) (*customer.Customer, error) {
-	ret := _m.Called(_a0)
+// Create provides a mock function with given fields: ctx, _a1
+func (_m *IRepository) Create(ctx context.Context, _a1 *customer.Customer) (*customer.Customer, error) {
+	ret := _m.Called(ctx, _a1)
 
 	var r0 *customer.Customer
 	var r1 error
-	if rf, ok := ret.Get(0).(func(customer.Customer) (*customer.Customer, error)); ok {
-		return rf(_a0)
+	if rf, ok := ret.Get(0).(func(context.Context, *customer.Customer) (*customer.Customer, error)); ok {
+		return rf(ctx, _a1)
 	}
-	if rf, ok := ret.Get(0).(func(customer.Customer) *customer.Customer); ok {
-		r0 = rf(_a0)
+	if rf, ok := ret.Get(0).(func(context.Context, *customer.Customer) *customer.Customer); ok {
+		r0 = rf(ctx, _a1)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*customer.Customer)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(customer.Customer) error); ok {
-		r1 = rf(_a0)
+	if rf, ok := ret.Get(1).(func(context.Context, *customer.Customer) error); ok {
+		r1 = rf(ctx, _a1)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -40,13 +42,13 @@ func (_m *IRepository) Create(_a0 customer.Customer) (*customer.Customer, error)
 	return r0, r1
 }
 
-// Delete provides a mock function with given fields: customerId
-func (_m *IRepository) Delete(customerId uuid.UUID) error {
-	ret := _m.Called(customerId)
+// Delete provides a mock function with given fields: ctx, customerId
+func (_m *IRepository) Delete(ctx context.Context, customerId uuid.UUID) error {
+	ret := _m.Called(ctx, customerId)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uuid.UUID) error); ok {
-		r0 = rf(customerId)
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) error); ok {
+		r0 = rf(ctx, customerId)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -54,25 +56,25 @@ func (_m *IRepository) Delete(customerId uuid.UUID) error {
 	return r0
 }
 
-// GetAll provides a mock function with given fields:
-func (_m *IRepository) GetAll() ([]customer.Customer, error) {
-	ret := _m.Called()
+// GetAll provides a mock function with given fields: ctx
+func (_m *IRepository) GetAll(ctx context.Context) ([]*customer.Customer, error) {
+	ret := _m.Called(ctx)
 
-	var r0 []customer.Customer
+	var r0 []*customer.Customer
 	var r1 error
-	if rf, ok := ret.Get(0).(func() ([]customer.Customer, error)); ok {
-		return rf()
+	if rf, ok := ret.Get(0).(func(context.Context) ([]*customer.Customer, error)); ok {
+		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func() []customer.Customer); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context) []*customer.Customer); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]customer.Customer)
+			r0 = ret.Get(0).([]*customer.Customer)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -80,25 +82,25 @@ func (_m *IRepository) GetAll() ([]customer.Customer, error) {
 	return r0, r1
 }
 
-// GetByCpf provides a mock function with given fields: customerCpf
-func (_m *IRepository) GetByCpf(customerCpf string) (*customer.Customer, error) {
-	ret := _m.Called(customerCpf)
+// GetByCpf provides a mock function with given fields: ctx, customerCpf
+func (_m *IRepository) GetByCpf(ctx context.Context, customerCpf string) (*customer.Customer, error) {
+	ret := _m.Called(ctx, customerCpf)
 
 	var r0 *customer.Customer
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string) (*customer.Customer, error)); ok {
-		return rf(customerCpf)
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*customer.Customer, error)); ok {
+		return rf(ctx, customerCpf)
 	}
-	if rf, ok := ret.Get(0).(func(string) *customer.Customer); ok {
-		r0 = rf(customerCpf)
+	if rf, ok := ret.Get(0).(func(context.Context, string) *customer.Customer); ok {
+		r0 = rf(ctx, customerCpf)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*customer.Customer)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(customerCpf)
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, customerCpf)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -106,25 +108,25 @@ func (_m *IRepository) GetByCpf(customerCpf string) (*customer.Customer, error) 
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: customerId, _a1
-func (_m *IRepository) Update(customerId uuid.UUID, _a1 customer.Customer) (*customer.Customer, error) {
-	ret := _m.Called(customerId, _a1)
+// Update provides a mock function with given fields: ctx, _a1
+func (_m *IRepository) Update(ctx context.Context, _a1 *customer.Customer) (*customer.Customer, error) {
+	ret := _m.Called(ctx, _a1)
 
 	var r0 *customer.Customer
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uuid.UUID, customer.Customer) (*customer.Customer, error)); ok {
-		return rf(customerId, _a1)
+	if rf, ok := ret.Get(0).(func(context.Context, *customer.Customer) (*customer.Customer, error)); ok {
+		return rf(ctx, _a1)
 	}
-	if rf, ok := ret.Get(0).(func(uuid.UUID, customer.Customer) *customer.Customer); ok {
-		r0 = rf(customerId, _a1)
+	if rf, ok := ret.Get(0).(func(context.Context, *customer.Customer) *customer.Customer); ok {
+		r0 = rf(ctx, _a1)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*customer.Customer)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(uuid.UUID, customer.Customer) error); ok {
-		r1 = rf(customerId, _a1)
+	if rf, ok := ret.Get(1).(func(context.Context, *customer.Customer) error); ok {
+		r1 = rf(ctx, _a1)
 	} else {
 		r1 = ret.Error(1)
 	}

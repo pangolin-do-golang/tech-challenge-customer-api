@@ -2,6 +2,7 @@ package handler_test
 
 import (
 	"github.com/pangolin-do-golang/tech-challenge-customer-api/mocks"
+	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,7 +14,7 @@ import (
 
 func TestRegisterCustomerHandlersSuccessfully(t *testing.T) {
 	mockService := new(mocks.IService)
-	mockService.On("GetAll").Return(nil, nil)
+	mockService.On("GetAll", mock.Anything).Return(nil, nil)
 	router := gin.Default()
 	handler.RegisterCustomerHandlers(router, mockService)
 

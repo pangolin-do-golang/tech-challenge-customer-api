@@ -1,10 +1,12 @@
 package customer_test
 
 import (
+	"context"
 	"errors"
 	"github.com/google/uuid"
 	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/core/customer"
 	"github.com/pangolin-do-golang/tech-challenge-customer-api/mocks"
+	"github.com/stretchr/testify/mock"
 	"reflect"
 	"testing"
 )
@@ -29,11 +31,11 @@ func TestService_Create(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "returns error for existing",
+			name: "returns error for existing customer",
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("GetByCpf", c.Cpf).Return(nil, errors.New("error"))
+					m.On("GetByCpf", mock.Anything, c.Cpf).Return(nil, errors.New("error"))
 					return m
 				},
 			},
@@ -44,11 +46,11 @@ func TestService_Create(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "returns error for non-null c",
+			name: "returns error for non-null customer",
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("GetByCpf", c.Cpf).Return(&customer.Customer{}, nil)
+					m.On("GetByCpf", mock.Anything, c.Cpf).Return(&customer.Customer{}, nil)
 					return m
 				},
 			},
@@ -59,12 +61,12 @@ func TestService_Create(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "returns error from c creation",
+			name: "returns error from customer creation",
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("GetByCpf", c.Cpf).Return(nil, nil)
-					m.On("Create", c).Return(nil, errors.New("error"))
+					m.On("GetByCpf", mock.Anything, c.Cpf).Return(nil, nil)
+					m.On("Create", mock.Anything, &c).Return(nil, errors.New("error"))
 					return m
 				},
 			},
@@ -75,12 +77,12 @@ func TestService_Create(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "creates c",
+			name: "creates customer",
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("GetByCpf", c.Cpf).Return(nil, nil)
-					m.On("Create", c).Return(&c, nil)
+					m.On("GetByCpf", mock.Anything, c.Cpf).Return(nil, nil)
+					m.On("Create", mock.Anything, &c).Return(&c, nil)
 					return m
 				},
 			},
@@ -94,7 +96,7 @@ func TestService_Create(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := customer.NewService(tt.fields.genRepository())
-			got, err := s.Create(tt.args.customer)
+			got, err := s.Create(context.TODO(), &tt.args.customer)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -136,13 +138,12 @@ func TestService_Update(t *testing.T) {
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("Update", c.Id, c).Return(nil, errors.New("error"))
+					m.On("Update", mock.Anything, &c).Return(nil, errors.New("error"))
 					return m
 				},
 			},
 			args: args{
-				customerId: c.Id,
-				customer:   c,
+				customer: c,
 			},
 			want:    nil,
 			wantErr: true,
@@ -152,7 +153,7 @@ func TestService_Update(t *testing.T) {
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("Update", c.Id, c).Return(&updatedCustomer, nil)
+					m.On("Update", mock.Anything, &c).Return(&updatedCustomer, nil)
 					return m
 				},
 			},
@@ -167,7 +168,7 @@ func TestService_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := customer.NewService(tt.fields.genRepository())
-			got, err := s.Update(tt.args.customerId, tt.args.customer)
+			got, err := s.Update(context.TODO(), &tt.args.customer)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -198,7 +199,7 @@ func TestService_Delete(t *testing.T) {
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("Delete", id).Return(errors.New("error"))
+					m.On("Delete", mock.Anything, id).Return(errors.New("error"))
 					return m
 				},
 			},
@@ -212,7 +213,7 @@ func TestService_Delete(t *testing.T) {
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("Delete", id).Return(nil)
+					m.On("Delete", mock.Anything, id).Return(nil)
 					return m
 				},
 			},
@@ -225,7 +226,7 @@ func TestService_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := customer.NewService(tt.fields.genRepository())
-			if err := s.Delete(tt.args.customerId); (err != nil) != tt.wantErr {
+			if err := s.Delete(context.TODO(), tt.args.customerId); (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -239,7 +240,7 @@ func TestService_GetAll(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    []customer.Customer
+		want    []*customer.Customer
 		wantErr bool
 	}{
 		{
@@ -247,11 +248,11 @@ func TestService_GetAll(t *testing.T) {
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("GetAll").Return([]customer.Customer{}, errors.New("error"))
+					m.On("GetAll", mock.Anything).Return([]*customer.Customer{}, errors.New("error"))
 					return m
 				},
 			},
-			want:    []customer.Customer{},
+			want:    []*customer.Customer{},
 			wantErr: true,
 		},
 		{
@@ -259,7 +260,7 @@ func TestService_GetAll(t *testing.T) {
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("GetAll").Return([]customer.Customer{
+					m.On("GetAll", mock.Anything).Return([]*customer.Customer{
 						{
 							Name: "Ronaldo",
 						},
@@ -267,7 +268,7 @@ func TestService_GetAll(t *testing.T) {
 					return m
 				},
 			},
-			want: []customer.Customer{
+			want: []*customer.Customer{
 				{
 					Name: "Ronaldo",
 				},
@@ -278,7 +279,7 @@ func TestService_GetAll(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := customer.NewService(tt.fields.genRepository())
-			got, err := s.GetAll()
+			got, err := s.GetAll(context.TODO())
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAll() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -310,7 +311,7 @@ func TestService_GetByCpf(t *testing.T) {
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("GetByCpf", cpf).Return(nil, errors.New("error"))
+					m.On("GetByCpf", mock.Anything, cpf).Return(nil, errors.New("error"))
 					return m
 				},
 			},
@@ -325,7 +326,7 @@ func TestService_GetByCpf(t *testing.T) {
 			fields: fields{
 				genRepository: func() customer.IRepository {
 					m := new(mocks.IRepository)
-					m.On("GetByCpf", cpf).Return(&customer.Customer{
+					m.On("GetByCpf", mock.Anything, cpf).Return(&customer.Customer{
 						Name: "Ronaldo",
 					}, nil)
 					return m
@@ -341,7 +342,7 @@ func TestService_GetByCpf(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := customer.NewService(tt.fields.genRepository())
-			got, err := s.GetByCpf(tt.args.cpf)
+			got, err := s.GetByCpf(context.TODO(), tt.args.cpf)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetByCpf() error = %v, wantErr %v", err, tt.wantErr)
 				return

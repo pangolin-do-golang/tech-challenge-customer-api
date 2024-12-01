@@ -18,7 +18,10 @@ func NewService(customerRepository IRepository) IService {
 }
 
 func (s *Service) Create(ctx context.Context, customer *Customer) (*Customer, error) {
-	existingCustomer, _ := s.GetByCpf(ctx, customer.Cpf)
+	existingCustomer, err := s.GetByCpf(ctx, customer.Cpf)
+	if err != nil {
+		return nil, err
+	}
 
 	if existingCustomer != nil {
 		return nil, errors.New("entered cpf is already registered in our system")
