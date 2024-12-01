@@ -1,6 +1,10 @@
 package customer
 
-import "github.com/google/uuid"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type Customer struct {
 	Id    uuid.UUID `json:"id"`
@@ -11,17 +15,17 @@ type Customer struct {
 }
 
 type IService interface {
-	Create(customer Customer) (*Customer, error)
-	Update(customerId uuid.UUID, customer Customer) (*Customer, error)
-	Delete(customerId uuid.UUID) error
-	GetAll() ([]Customer, error)
-	GetByCpf(customerCpf string) (*Customer, error)
+	Create(ctx context.Context, customer *Customer) (*Customer, error)
+	Update(ctx context.Context, customer *Customer) (*Customer, error)
+	Delete(ctx context.Context, customerId uuid.UUID) error
+	GetAll(ctx context.Context) ([]*Customer, error)
+	GetByCpf(ctx context.Context, customerCpf string) (*Customer, error)
 }
 
 type IRepository interface {
-	Create(customer Customer) (*Customer, error)
-	Update(customerId uuid.UUID, customer Customer) (*Customer, error)
-	Delete(customerId uuid.UUID) error
-	GetAll() ([]Customer, error)
-	GetByCpf(customerCpf string) (*Customer, error)
+	Create(ctx context.Context, customer *Customer) (*Customer, error)
+	Update(ctx context.Context, customer *Customer) (*Customer, error)
+	Delete(ctx context.Context, customerId uuid.UUID) error
+	GetAll(ctx context.Context) ([]*Customer, error)
+	GetByCpf(ctx context.Context, customerCpf string) (*Customer, error)
 }

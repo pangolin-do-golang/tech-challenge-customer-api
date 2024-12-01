@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/adapters/rest/handler"
@@ -32,8 +33,8 @@ func (rs RestServer) Serve() {
 
 	handler.RegisterCustomerHandlers(r, rs.customerService)
 	handler.RegisterSwaggerHandlers(r)
-	err := r.Run("0.0.0.0:8080")
+	err := r.Run(":" + os.Getenv("API_PORT"))
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 }
