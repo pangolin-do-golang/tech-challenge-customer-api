@@ -24,6 +24,7 @@ func NewBusinessError(err error, mes string) *Error {
 
 func NewInputError(err error) *Error {
 	return &Error{
+		Message:       err.Error(),
 		originalError: err,
 		Type:          "INPUT",
 	}

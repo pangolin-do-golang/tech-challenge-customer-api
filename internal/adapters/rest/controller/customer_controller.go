@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/pangolin-do-golang/tech-challenge/internal/errutil"
 	"net/http"
+
+	"github.com/pangolin-do-golang/tech-challenge/internal/errutil"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -45,7 +46,7 @@ func (ctrl CustomerController) Create(c *gin.Context) {
 		return
 	}
 
-	created, err := ctrl.service.Create(customer.Customer{
+	created, err := ctrl.service.Create(c.Request.Context(), &customer.Customer{
 		Name:  payload.Name,
 		Cpf:   payload.Cpf,
 		Email: payload.Email,
@@ -85,7 +86,8 @@ func (ctrl CustomerController) Update(c *gin.Context) {
 		return
 	}
 
-	updated, err := ctrl.service.Update(id, customer.Customer{
+	updated, err := ctrl.service.Update(c.Request.Context(), &customer.Customer{
+		Id:    id,
 		Name:  payload.Name,
 		Cpf:   payload.Cpf,
 		Email: payload.Email,
@@ -118,7 +120,7 @@ func (ctrl CustomerController) Delete(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.service.Delete(id); err != nil {
+	if err := ctrl.service.Delete(c.Request.Context(), id); err != nil {
 		ctrl.Error(c, err)
 		return
 	}
@@ -135,7 +137,7 @@ func (ctrl CustomerController) Delete(c *gin.Context) {
 // @Success 200 {object} []customer.Customer{}
 // @Router /customer [get]
 func (ctrl CustomerController) GetAll(c *gin.Context) {
-	customerSlice, err := ctrl.service.GetAll()
+	customerSlice, err := ctrl.service.GetAll(c.Request.Context())
 	if err != nil {
 		ctrl.Error(c, err)
 		return
@@ -157,7 +159,7 @@ func (ctrl CustomerController) GetAll(c *gin.Context) {
 func (ctrl CustomerController) GetByCpf(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	customerRecord, err := ctrl.service.GetByCpf(cpf)
+	customerRecord, err := ctrl.service.GetByCpf(c.Request.Context(), cpf)
 	if err != nil {
 		ctrl.Error(c, err)
 		return
