@@ -8,20 +8,20 @@ Miro Board: https://miro.com/app/board/uXjVKVoZwos=/?share_link_id=718027124865
 
 ## Install
 
-### Go 
+### Go
 
 - [Go Install](https://go.dev/doc/install)
 
 > Make sure you have Go 1.22.2 or higher
 
-Execute 
+Execute
 
 ```shell
 go mod tidy
 ```
 
 ## Run tests
-    
+
 ```shell
 go test -cover ./...
 ```
@@ -30,20 +30,20 @@ go test -cover ./...
 
 To correctly use the project, it is necessary to define a .env file, with the values for the envs:
 
-* DB_USERNAME 
-* DB_PASSWORD 
-* DB_HOST 
-* DB_NAME 
+* DB_USERNAME
+* DB_PASSWORD
+* DB_HOST
+* DB_NAME
 * DB_PORT
 
 We recommend using for development the following values:
 
 ```
-DB_USERNAME=user
+DB_USERNAME=root
 DB_PASSWORD=pass
-DB_HOST=pgsql
-DB_NAME=postgres
-DB_PORT=5432
+DB_HOST=mongo
+DB_NAME=customer-dev
+DB_PORT=27017
 ```
 
 ## Executing with Docker (Compose)
@@ -73,7 +73,7 @@ Follow the guide (in portuguese) for a step-by-step guide to the project [here](
 
 - [Go](https://go.dev/)
 - [Gin Web Framework](https://gin-gonic.com/) - Routes, JSON validation, Error management, Middleware support
-- [PostgresSQL](https://www.postgresql.org/) - Database
+- [MongoDB](https://www.mongodb.com/pt-br) - Database
 - [swag](https://github.com/swaggo/swag) - Tool to generate swagger documentation
 - [docker](https://www.docker.com/) - Containerization tool
 - [docker-compose](https://docs.docker.com/compose/) - Tool to define and run multi-container Docker applications
@@ -105,10 +105,10 @@ This project makes use of the library [swag](https://github.com/swaggo/swag?tab=
 
 Follow the steps described in the [official documentation](https://github.com/swaggo/swag?tab=readme-ov-file#getting-started)
 
-### Generate 
+### Generate
 
 ```shell
- swag init -g cmd/http/main.go 
+ swag init -g cmd/http/main.go
 ```
 
 ### Access the documentation
