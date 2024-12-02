@@ -42,6 +42,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           SHA: ${{ steps.short-sha.outputs.sha }}
         with:
+          projectBaseDir: ./
           args: >
             -Dsonar.organization=pangolin-golang
             -Dsonar.projectKey=pangolin-do-golang_tech-challenge-customer-api
