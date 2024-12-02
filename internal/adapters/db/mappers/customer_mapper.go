@@ -1,8 +1,8 @@
 package mappers
 
 import (
-	"github.com/pangolin-do-golang/tech-challenge/internal/adapters/db/documents"
-	"github.com/pangolin-do-golang/tech-challenge/internal/core/customer"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/adapters/db/documents"
+	"github.com/pangolin-do-golang/tech-challenge-customer-api/internal/core/customer"
 )
 
 func MapCustomerEntityToDocument(entity *customer.Customer) *documents.CustomerDocument {
